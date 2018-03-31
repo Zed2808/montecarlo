@@ -10,18 +10,20 @@ class TicTacToeTestCase(unittest.TestCase):
     def test_legal_plays(self):
         state_history = []
         state = tictactoe.new_game()
-        state['board'] = [['x', '', ''], ['', 'o', ''], ['', '', 'x']]
+        state['board'] = [['X', '', ''], ['', 'O', ''], ['', '', 'X']]
         state_history.append(state)
         expected = [(0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1)]
         self.assertEqual(tictactoe.legal_plays(state_history), expected)
 
     def test_next_state(self):
+        state_history = []
         state = tictactoe.new_game()
-        state['board'] = [['x', '', ''], ['', 'o', ''], ['', '', 'x']]
+        state['board'] = [['X', '', ''], ['', 'O', ''], ['', '', 'X']]
         state['player'] = 1
+        state_history.append(state)
         play = (1, 2)
-        expected = {'board': [['x', '', ''], ['', 'o', 'o'], ['', '', 'x']], 'player': 0}
-        self.assertEqual(tictactoe.next_state(state, play), expected)
+        expected = {'board': [['X', '', ''], ['', 'O', 'O'], ['', '', 'X']], 'player': 0}
+        self.assertEqual(tictactoe.next_state(state_history, play), expected)
 
     def test_winner(self):
         state_history = []
@@ -29,24 +31,37 @@ class TicTacToeTestCase(unittest.TestCase):
         state_history.append(state)
 
         # Horizontal win
-        state['board'] = [['x', '', 'x'], ['o', 'o', 'o'], ['', '', 'x']]
+        state['board'] = [['X', '', 'X'], ['O', 'O', 'O'], ['', '', 'X']]
         self.assertEqual(tictactoe.winner(state_history), 1)
 
         # Vertical win
-        state['board'] = [['x', '', 'o'], ['x', 'o', ''], ['x', '', 'x']]
+        state['board'] = [['X', '', 'O'], ['X', 'O', ''], ['X', '', 'X']]
         self.assertEqual(tictactoe.winner(state_history), 0)
 
         # Diagonal win
-        state['board'] = [['x', 'x', 'o'], ['', 'o', ''], ['o', '', 'x']]
+        state['board'] = [['X', 'X', 'O'], ['', 'O', ''], ['O', '', 'X']]
         self.assertEqual(tictactoe.winner(state_history), 1)
 
         # No win yet
-        state['board'] = [['x', '', 'x'], ['', 'o', 'o'], ['', '', 'x']]
+        state['board'] = [['X', '', 'X'], ['', 'O', 'O'], ['', '', 'X']]
         self.assertEqual(tictactoe.winner(state_history), -1)
 
         # Tied game
-        state['board'] = [['x', 'o', 'x'], ['o', 'x', 'o'], ['o', 'x', 'o']]
+        state['board'] = [['X', 'O', 'X'], ['O', 'X', 'O'], ['O', 'X', 'O']]
         self.assertEqual(tictactoe.winner(state_history), -2)
+
+    def test_print_game(self):
+        state_history = []
+        state = tictactoe.new_game()
+        state['board'] = [['X', '', 'X'], ['O', 'O', ''], ['X', '', '']]
+        state_history.append(state)
+
+        expected  = ' X |   | X\n'
+        expected += '-----------\n'
+        expected += ' O | O |  \n'
+        expected += '-----------\n'
+        expected += ' X |   |  '
+        self.assertEqual(tictactoe.print_game(state_history), expected)
 
 if __name__ == '__main__':
     unittest.main()
