@@ -25,6 +25,21 @@ def winner(state_history):
             return 0 if row[0] == 'x' else 1
 
     # Check for vertical wins
-    for col in board[0]:
-        for row in board:
-            
+    for col in enumerate(board[0]):
+        if col[1] == board[1][col[0]] and col[1] == board[2][col[0]]:
+            return 0 if col[1] == 'x' else 1
+
+    # Check for diagonal wins
+    if board[0][0] == board[1][1] == board[2][2]:
+        return 0 if board[0][0] == 'x' else 1
+
+    if board[0][2] == board[1][1] == board[2][0]:
+        return 0 if board[0][2] == 'x' else 1
+
+    # Check for tie
+    # If there are no empty spaces:
+    if not any('' in row for row in board):
+        return -2
+
+    # If no player has won yet
+    return -1

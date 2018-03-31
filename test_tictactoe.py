@@ -40,5 +40,13 @@ class TicTacToeTestCase(unittest.TestCase):
         state['board'] = [['x', 'x', 'o'], ['', 'o', ''], ['o', '', 'x']]
         self.assertEqual(tictactoe.winner(state_history), 1)
 
+        # No win yet
+        state['board'] = [['x', '', 'x'], ['', 'o', 'o'], ['', '', 'x']]
+        self.assertEqual(tictactoe.winner(state_history), -1)
+
+        # Tied game
+        state['board'] = [['x', 'o', 'x'], ['o', 'x', 'o'], ['o', 'x', 'o']]
+        self.assertEqual(tictactoe.winner(state_history), -2)
+
 if __name__ == '__main__':
     unittest.main()
