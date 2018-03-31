@@ -27,7 +27,7 @@ def winner(state_history):
 
     # Check for vertical wins
     for col in enumerate(board[0]):
-        if col[1] == board[1][col[0]] and col[1] == board[2][col[0]] and row[0]:
+        if col[1] == board[1][col[0]] and col[1] == board[2][col[0]] and col[1]:
             return 0 if col[1] == 'X' else 1
 
     # Check for diagonal wins
