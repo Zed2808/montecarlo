@@ -50,18 +50,18 @@ class TicTacToeTestCase(unittest.TestCase):
         state['board'] = [['X', 'O', 'X'], ['O', 'X', 'O'], ['O', 'X', 'O']]
         self.assertEqual(tictactoe.winner(state_history), -2)
 
-    def test_print_game(self):
+    def test_to_string(self):
         state_history = []
         state = tictactoe.new_game()
         state['board'] = [['X', '', 'X'], ['O', 'O', ''], ['X', '', '']]
         state_history.append(state)
 
-        expected  = ' X |   | X\n'
+        expected  = ' X | 2 | X\n'
         expected += '-----------\n'
-        expected += ' O | O |  \n'
+        expected += ' O | O | 6\n'
         expected += '-----------\n'
-        expected += ' X |   |  '
-        self.assertEqual(tictactoe.print_game(state_history), expected)
+        expected += ' X | 8 | 9'
+        self.assertEqual(tictactoe.to_string(state_history), expected)
 
 if __name__ == '__main__':
     unittest.main()

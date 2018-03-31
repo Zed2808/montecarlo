@@ -22,19 +22,19 @@ def winner(state_history):
     for row in board:
         # If the instances of row[0] is the same as the length of row
         # (meaning every element in the row is the same)
-        if row.count(row[0]) == len(row):
+        if row.count(row[0]) == len(row) and row[0]:
             return 0 if row[0] == 'X' else 1
 
     # Check for vertical wins
     for col in enumerate(board[0]):
-        if col[1] == board[1][col[0]] and col[1] == board[2][col[0]]:
+        if col[1] == board[1][col[0]] and col[1] == board[2][col[0]] and row[0]:
             return 0 if col[1] == 'X' else 1
 
     # Check for diagonal wins
-    if board[0][0] == board[1][1] == board[2][2]:
+    if board[0][0] == board[1][1] == board[2][2] and row[0]:
         return 0 if board[0][0] == 'X' else 1
 
-    if board[0][2] == board[1][1] == board[2][0]:
+    if board[0][2] == board[1][1] == board[2][0] and row[0]:
         return 0 if board[0][2] == 'X' else 1
 
     # Check for tie
@@ -46,11 +46,11 @@ def winner(state_history):
     return -1
 
 # Prints the game board
-def print_game(state_history):
+def to_string(state_history):
     board = state_history[-1]['board']
 
     # Replace empty spots with a space instead of an empty string
-    board = [[col if col else ' ' for col in row] for row in board]
+    board = [[col[1] if col[1] else (row[0])*3 + col[0]+1  for col in enumerate(row[1])] for row in enumerate(board)]
 
     s  = f' {board[0][0]} | {board[0][1]} | {board[0][2]}\n'
     s += '-----------\n'
