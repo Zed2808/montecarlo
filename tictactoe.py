@@ -31,10 +31,10 @@ def winner(state_history):
             return 0 if col[1] == 'X' else 1
 
     # Check for diagonal wins
-    if board[0][0] == board[1][1] == board[2][2] and row[0]:
+    if board[0][0] and board[0][0] == board[1][1] == board[2][2]:
         return 0 if board[0][0] == 'X' else 1
 
-    if board[0][2] == board[1][1] == board[2][0] and row[0]:
+    if board[0][2] and board[0][2] == board[1][1] == board[2][0]:
         return 0 if board[0][2] == 'X' else 1
 
     # Check for tie

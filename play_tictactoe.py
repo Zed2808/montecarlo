@@ -22,7 +22,7 @@ while tictactoe.winner(history) == -1:
 
             # Convert from user-readable slot number to slot coordinates
             play = ((choice-1)//3, (choice-1)%3)
-            
+
             # Make sure selected slot is still open
             if play not in legal_plays:
                 raise Exception()
@@ -37,4 +37,8 @@ while tictactoe.winner(history) == -1:
     print()
     print(tictactoe.to_string(history))
 
-print(f'Player {tictactoe.winner(history) + 1} has won the game!')
+if tictactoe.winner(history) == -2:
+    print('The game ends in a tie!')
+else:
+    print(f'Player {tictactoe.winner(history) + 1} has won the game!')
+
