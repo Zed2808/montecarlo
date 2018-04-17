@@ -17,7 +17,7 @@ class MonteCarlo:
         # Get max moves to make during a simulation
         self.max_moves = kwargs.get('max_moves', 10)
 
-    # Takes game state and appends it to history
+    # Updates self with the given game history
     def update(self, state):
         self.history.append(state)
 
@@ -25,13 +25,13 @@ class MonteCarlo:
     def get_play(self):
         self.max_depth = 0
         state = self.history[-1]
-        player = self.board.current_player(state)
+        player = self.board.current_player(self.history)
         legal_plays = self.board.legal_plays(self.history)
 
         # Return early if 0 or 1 choices
         if not legal_plays:
             return
-        if len(legal) == 1:
+        if len(legal_plays) == 1:
             return legal[0]
 
         games = 0
@@ -39,7 +39,11 @@ class MonteCarlo:
 
         # Simulate only until sim_time has elapsed
         while datetime.datetime.utcnow() - start_time < self.sim_time:
+            print(f'Simulating game {games}')
             self.simulate()
+            print(f'(Simulation of game {games} complete)')
+            print(f'(Plays: {self.plays}')
+            print(f'(Wins : {self.wins}')
             games += 1
 
         # Create a list of (play, state) tuples for each legal move and the state it will produce
@@ -52,6 +56,7 @@ class MonteCarlo:
         winrate, move = max((self.wins.get((player, s), 0) / self.plays.get((player, s), 1), p) for p, s in plays_states)
 
         # Display the stats for each possible play
+        # Just do this later basically
 
         print(f'Maximum depth search: {self.max_depth}')
 
@@ -62,27 +67,37 @@ class MonteCarlo:
         visited_states = set()
         history_copy = self.history[:]
         state = history_copy[-1]
-        player = self.board.current_player(state)
+        board = state['board']
+        board_flat = [col for row in board for col in row]
+        board_flat.append(state['player'])
+        state_tuple = tuple(x for x in board_flat)
+        player = self.board.current_player(history_copy)
 
         expand = True
         for t in range(self.max_moves):
+            print(f'Simulating move {t}')
             legal_plays = self.board.legal_plays(history_copy)
+            print(self.board.to_string(history_copy))
+            print(f'state_tuple: {state_tuple}')
+            print(f'legal_plays: {legal_plays}')
 
             play = random.choice(legal_plays)
-            state = self.board.next_state(state, play)
+            print(f'Randomly selected play: {play}')
+            state = self.board.next_state(history_copy, play)
             history_copy.append(state)
 
             # Player refers to the player that moved into the state
-            if expand and (player, state) not in self.plays:
+            if expand and (player, state_tuple) not in self.plays:
                 expand = False
-                self.plays[(player, state)] = 0
-                self.wins[(player, state)] = 0
+                self.plays[(player, state_tuple)] = 0
+                self.wins[(player, state_tuple)] = 0
 
-            visited_states.add((player, state))
+            visited_states.add((player, state_tuple))
 
-            player = self.board.current_player(state)
+            player = self.board.current_player(history_copy)
             winner = self.board.winner(history_copy)
             if winner:
+                print(f'Game won by player {winner}')
                 break
 
         for player, state in visited_states:

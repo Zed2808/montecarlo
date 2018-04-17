@@ -2,6 +2,10 @@
 def new_game():
     return {'board': [['', '', ''], ['', '', ''], ['', '', '']], 'player': 0}
 
+# Returns the id of the active player
+def current_player(state_history):
+    return state_history[-1]['player']
+
 # Returns a list of legal moves for the current player
 def legal_plays(state_history):
     board = state_history[-1]['board']
