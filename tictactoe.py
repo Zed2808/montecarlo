@@ -3,24 +3,23 @@ def new_game():
     return {'board': [['', '', ''], ['', '', ''], ['', '', '']], 'player': 0}
 
 # Returns the id of the active player
-def current_player(state_history):
-    return state_history[-1]['player']
+def current_player(state):
+    return state['player']
 
 # Returns a list of legal moves for the current player
-def legal_plays(state_history):
-    board = state_history[-1]['board']
+def legal_plays(state):
+    board = state['board']
     return [(row[0], col[0]) for row in enumerate(board) for col in enumerate(row[1]) if col[1] == '']
 
 # Returns the next game state given the current state and move
-def next_state(state_history, play):
-    state = state_history[-1]
+def next_state(state, play):
     state['board'][play[0]][play[1]] = 'X' if state['player'] == 0 else 'O'
     state['player'] = 1 if state['player'] == 0 else 0
     return state
 
 # Given game state, determine if the game has been won (or tied)
-def winner(state_history):
-    board = state_history[-1]['board']
+def winner(state):
+    board = state['board']
 
     # Check for horizontal wins
     for row in board:
@@ -50,11 +49,14 @@ def winner(state_history):
     return -1
 
 # Prints the game board
-def to_string(state_history):
-    board = state_history[-1]['board']
+def to_string(state, numbers=False):
+    board = state['board']
 
-    # Replace empty spots with a space instead of an empty string
-    board = [[col[1] if col[1] else (row[0])*3 + col[0]+1  for col in enumerate(row[1])] for row in enumerate(board)]
+    # Replace empty spots with a space (or number) instead of an empty string
+    if numbers:
+        board = [[col[1] if col[1] else (row[0])*3 + col[0]+1  for col in enumerate(row[1])] for row in enumerate(board)]
+    else:
+        board = [[col if col else ' ' for col in row] for row in board]
 
     s  = f' {board[0][0]} | {board[0][1]} | {board[0][2]}\n'
     s += '-----------\n'

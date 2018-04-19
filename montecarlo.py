@@ -1,109 +1,93 @@
 import datetime
 import random
+import copy
 
-class MonteCarlo:
+'''
+1. Find current player's legal moves
+2. Run one simulation for each legal move until time runs out
+3. For each simulation, choose a sequence of random moves until a winner is found
+4. Once a winner is found, update the win% for that first play
+'''
 
-    # Takes a Board instance and initializes list of game states and stats
-    def __init__(self, board, **kwargs):
-        self.board = board
-        self.history = []
-        self.wins = {}
-        self.plays = {}
+# Return the best move after simulations
+def best_play(game, state, sim_time=1):
+    # Change sim_time from seconds to a datetime-compatible timedelta
+    sim_time = datetime.timedelta(seconds=sim_time)
 
-        # Get argument for max simulation time in seconds
-        seconds = kwargs.get('time', 5)
-        self.sim_time = datetime.timedelta(seconds=seconds)
+    # Get the current player and their legal moves within the game
+    player = game.current_player(state)
+    legal_plays = game.legal_plays(state)
 
-        # Get max moves to make during a simulation
-        self.max_moves = kwargs.get('max_moves', 10)
+    # Create a dictionary with all legal plays to store wins/play
+    wins = {play: 0 for play in legal_plays}
 
-    # Updates self with the given game history
-    def update(self, state):
-        self.history.append(state)
+    print(game.to_string(state))
+    print(f'State: {state}')
+    print(f'Legal plays: {legal_plays}')
 
-    # Calculate the best move from the current state
-    def get_play(self):
-        self.max_depth = 0
-        state = self.history[-1]
-        player = self.board.current_player(self.history)
-        legal_plays = self.board.legal_plays(self.history)
+    # Return early if no choices are available
+    if not legal_plays:
+        return
+    if len(legal_plays) == 1:
+        return legal_plays[0]
 
-        # Return early if 0 or 1 choices
-        if not legal_plays:
-            return
-        if len(legal_plays) == 1:
-            return legal[0]
+    # Number of games simulated from the current state
+    games = 0
 
-        games = 0
-        start_time = datetime.datetime.utcnow()
+    # Current time (to track elapsed time)
+    start_time = datetime.datetime.utcnow()
 
-        # Simulate only until sim_time has elapsed
-        while datetime.datetime.utcnow() - start_time < self.sim_time:
-            print(f'Simulating game {games}')
-            self.simulate()
-            print(f'(Simulation of game {games} complete)')
-            print(f'(Plays: {self.plays}')
-            print(f'(Wins : {self.wins}')
+    # Simulate only until sim_time has elapsed
+    while datetime.datetime.utcnow() - start_time < sim_time:
+        # Run the same number of simulations for each possible play
+        for play in legal_plays:
+            print(f'Game #{games}:\n{game.to_string(state)}\n')
+
+            # Simulate a game randomly after the given play
+            win = simulate(game, state, play)
+
+            print(f'Game won: {win}')
+            print('---------------------------------------')
+
+            # Add the result of the game to the dict of win stats
+            if win:
+                wins[play] += 1
+
             games += 1
 
-        # Create a list of (play, state) tuples for each legal move and the state it will produce
-        plays_states = [(p, self.board.next_state(state, p)) for p in legal]
+    print(f'Simulated {games} games in {datetime.datetime.utcnow() - start_time}')
+    print(f'Wins/play: {wins}')
 
-        # Display the number of simulate() calls and the time elapsed
-        print(f'{games} games played in {datetime.datetime.utcnow() - start_time} seconds')
+    move = max(wins, key=wins.get)
+    print(f'Best play: {move}')
 
-        # Pick the move with the highest winrate
-        winrate, move = max((self.wins.get((player, s), 0) / self.plays.get((player, s), 1), p) for p, s in plays_states)
+    return move
 
-        # Display the stats for each possible play
-        # Just do this later basically
+# Randomly simulate a game given a play, return whether or not the game was won
+def simulate(game, state, play):
+    # Store original player this game
+    player = game.current_player(state)
 
-        print(f'Maximum depth search: {self.max_depth}')
+    # Make a copy of the game's state to avoid altering the original
+    state_copy = copy.deepcopy(state)
 
-        return move
+    # Update state with the given play
+    state_copy = game.next_state(state_copy, play)
 
-    # Execute random playout from current state and update stats tables
-    def simulate(self):
-        visited_states = set()
-        history_copy = self.history[:]
-        state = history_copy[-1]
-        board = state['board']
-        board_flat = [col for row in board for col in row]
-        board_flat.append(state['player'])
-        state_tuple = tuple(x for x in board_flat)
-        player = self.board.current_player(history_copy)
+    print(f'Simulating from:\n{game.to_string(state_copy)}\n')
 
-        expand = True
-        for t in range(self.max_moves):
-            print(f'Simulating move {t}')
-            legal_plays = self.board.legal_plays(history_copy)
-            print(self.board.to_string(history_copy))
-            print(f'state_tuple: {state_tuple}')
-            print(f'legal_plays: {legal_plays}')
+    # Until a winner has been determined
+    while game.winner(state_copy) == -1:
+        # Get legal plays for the new state
+        legal_plays = game.legal_plays(state_copy)
 
-            play = random.choice(legal_plays)
-            print(f'Randomly selected play: {play}')
-            state = self.board.next_state(history_copy, play)
-            history_copy.append(state)
+        # Randomly select a legal play
+        play = random.choice(legal_plays)
 
-            # Player refers to the player that moved into the state
-            if expand and (player, state_tuple) not in self.plays:
-                expand = False
-                self.plays[(player, state_tuple)] = 0
-                self.wins[(player, state_tuple)] = 0
+        # Update state with new random play
+        state_copy = game.next_state(state_copy, play)
 
-            visited_states.add((player, state_tuple))
+    print(f'Game ended as:\n{game.to_string(state_copy)}')
 
-            player = self.board.current_player(history_copy)
-            winner = self.board.winner(history_copy)
-            if winner:
-                print(f'Game won by player {winner}')
-                break
-
-        for player, state in visited_states:
-            if (player, state) not in self.plays:
-                continue
-            self.plays[(player, state)] += 1
-            if player == winner:
-                self.wins[(player, state)] += 1
-
+    # If player whose turn it is wins, return True
+    return True if player == game.winner(state_copy) else False
