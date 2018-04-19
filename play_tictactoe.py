@@ -1,15 +1,15 @@
 import tictactoe
 
 # Create a new game history, starting with a new game
-history = [tictactoe.new_game()]
+state = tictactoe.new_game()
 
 # Print out the game board
-print(tictactoe.to_string(history))
+print(tictactoe.to_string(state))
 
 # Continue while the game has no winner (and is not tied)
-while tictactoe.winner(history) == -1:
+while tictactoe.winner(state) == -1:
     # Get a list of legal moves
-    legal_plays = tictactoe.legal_plays(history)
+    legal_plays = tictactoe.legal_plays(state)
 
     invalid_input = True
     while invalid_input:
@@ -31,14 +31,14 @@ while tictactoe.winner(history) == -1:
         except:
             print('Please enter a legal move.')
 
-    history.append(tictactoe.next_state(history, play))
+    tictactoe.next_state(state, play)
 
     # Print out the game board
     print()
-    print(tictactoe.to_string(history))
+    print(tictactoe.to_string(state))
 
-if tictactoe.winner(history) == -2:
+if tictactoe.winner(state) == -2:
     print('The game ends in a tie!')
 else:
-    print(f'Player {tictactoe.winner(history) + 1} has won the game!')
+    print(f'Player {tictactoe.winner(state) + 1} has won the game!')
 

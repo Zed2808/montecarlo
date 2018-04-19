@@ -15,7 +15,6 @@ def legal_plays(state):
 def next_state(state, play):
     state['board'][play[0]][play[1]] = 'X' if state['player'] == 0 else 'O'
     state['player'] = 1 if state['player'] == 0 else 0
-    return state
 
 # Given game state, determine if the game has been won (or tied)
 def winner(state):
