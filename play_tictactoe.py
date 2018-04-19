@@ -4,9 +4,6 @@ import montecarlo
 # Create a new game history, starting with a new game
 state = tictactoe.new_game()
 
-# Print out the game board
-print(tictactoe.to_string(state, numbers=True))
-
 # Continue while the game has no winner (and is not tied)
 while tictactoe.winner(state) == -1:
     # Get a list of legal moves
@@ -14,6 +11,9 @@ while tictactoe.winner(state) == -1:
 
     # If it's X's turn, use player input
     if tictactoe.current_player(state) == 0:
+        # Print out the game board
+        print(f'\n{tictactoe.to_string(state, numbers=True)}')
+
         invalid_input = True
         while invalid_input:
             # Get move from user
@@ -40,7 +40,7 @@ while tictactoe.winner(state) == -1:
     tictactoe.next_state(state, play)
 
     # Print out the game board
-    print(f'\n{tictactoe.to_string(state, numbers=True)}')
+    print(f'\n{tictactoe.to_string(state)}')
 
 if tictactoe.winner(state) == -2:
     print('The game ends in a tie!')

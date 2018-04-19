@@ -2,17 +2,16 @@ import datetime
 import random
 import copy
 
-'''
-1. Find current player's legal moves
-2. Run one simulation for each legal move until time runs out
-3. For each simulation, choose a sequence of random moves until a winner is found
-4. Once a winner is found, update the win% for that first play
-'''
+DEBUG = False
+
+def log(s):
+    if DEBUG:
+        print(s)
 
 # Return the best move after simulations
 def best_play(game, state, sim_time=1):
-    print('---------------------------------')
-    print('BEGINNING MONTE CARLO TREE SEARCH')
+    log('---------------------------------')
+    log('BEGINNING MONTE CARLO TREE SEARCH')
     # Change sim_time from seconds to a datetime-compatible timedelta
     sim_time = datetime.timedelta(seconds=sim_time)
 
@@ -23,7 +22,7 @@ def best_play(game, state, sim_time=1):
     # Create a dictionary with all legal plays to store wins/play
     wins = {play: 0 for play in legal_plays}
 
-    print(f'Legal plays: {legal_plays}')
+    log(f'Legal plays: {legal_plays}')
 
     # Return early if no choices are available
     if not legal_plays:
@@ -41,13 +40,13 @@ def best_play(game, state, sim_time=1):
     while datetime.datetime.utcnow() - start_time < sim_time:
         # Run the same number of simulations for each possible play
         for play in legal_plays:
-            print(f'Game #{games}')
+            log(f'Game #{games}')
 
             # Simulate a game randomly after the given play
             win = simulate(game, state, play)
 
-            print(f'Game won: {win}')
-            print('---------------------------------------')
+            log(f'Game won: {win}')
+            log('---------------------------------------')
 
             # Add the result of the game to the dict of win stats
             if win:
@@ -55,11 +54,11 @@ def best_play(game, state, sim_time=1):
 
             games += 1
 
-    print(f'Simulated {games} games in {datetime.datetime.utcnow() - start_time}')
-    print(f'Wins/play: {wins}')
+    log(f'Simulated {games} games in {datetime.datetime.utcnow() - start_time}')
+    log(f'Wins/play: {wins}')
 
     move = max(wins, key=wins.get)
-    print(f'Best play: {move}')
+    log(f'Best play: {move}')
 
     return move
 
@@ -74,7 +73,7 @@ def simulate(game, state, play):
     # Update state with the given play
     game.next_state(state_copy, play)
 
-    print(f'Simulating from:\n{game.to_string(state_copy)}\n')
+    log(f'Simulating from:\n{game.to_string(state_copy)}\n')
 
     # Until a winner has been determined
     while game.winner(state_copy) == -1:
@@ -87,7 +86,7 @@ def simulate(game, state, play):
         # Update state with new random play
         game.next_state(state_copy, play)
 
-    print(f'Game ended as:\n{game.to_string(state_copy)}')
+    log(f'Game ended as:\n{game.to_string(state_copy)}')
 
     # If player whose turn it is wins, return True
     return True if player == game.winner(state_copy) else False
