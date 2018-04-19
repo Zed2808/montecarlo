@@ -11,6 +11,8 @@ import copy
 
 # Return the best move after simulations
 def best_play(game, state, sim_time=1):
+    print('---------------------------------')
+    print('BEGINNING MONTE CARLO TREE SEARCH')
     # Change sim_time from seconds to a datetime-compatible timedelta
     sim_time = datetime.timedelta(seconds=sim_time)
 
@@ -21,8 +23,6 @@ def best_play(game, state, sim_time=1):
     # Create a dictionary with all legal plays to store wins/play
     wins = {play: 0 for play in legal_plays}
 
-    print(game.to_string(state))
-    print(f'State: {state}')
     print(f'Legal plays: {legal_plays}')
 
     # Return early if no choices are available
@@ -41,7 +41,7 @@ def best_play(game, state, sim_time=1):
     while datetime.datetime.utcnow() - start_time < sim_time:
         # Run the same number of simulations for each possible play
         for play in legal_plays:
-            print(f'Game #{games}:\n{game.to_string(state)}\n')
+            print(f'Game #{games}')
 
             # Simulate a game randomly after the given play
             win = simulate(game, state, play)
@@ -72,7 +72,7 @@ def simulate(game, state, play):
     state_copy = copy.deepcopy(state)
 
     # Update state with the given play
-    state_copy = game.next_state(state_copy, play)
+    game.next_state(state_copy, play)
 
     print(f'Simulating from:\n{game.to_string(state_copy)}\n')
 
@@ -85,7 +85,7 @@ def simulate(game, state, play):
         play = random.choice(legal_plays)
 
         # Update state with new random play
-        state_copy = game.next_state(state_copy, play)
+        game.next_state(state_copy, play)
 
     print(f'Game ended as:\n{game.to_string(state_copy)}')
 
