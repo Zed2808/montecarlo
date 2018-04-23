@@ -93,61 +93,76 @@ def legal_jumps(state):
     # Iterate over each space on the board
     for rownum, row in enumerate(board):
         for colnum, col in enumerate(row):
-            # Check forward jumps available to black
-            if col in black_pieces and player == 0:
-                # Space two up/two left is in bounds and empty
-                if in_bounds((rownum-2, colnum-2)) and board[rownum-2][colnum-2] == '':
-                    # Space directly up/left is a white piece
-                    if board[rownum-1][colnum-1] in white_pieces:
-                        legal.append( ((rownum, colnum), (rownum-2, colnum-2)) )
+            # If the piece belongs to the current player, add its jumps to total list of legal jumps
+            if (col in black_pieces and player == 0) or (col in white_pieces and player == 1):
+                legal.extend(piece_jumps(state, (rownum, colnum)))
 
-                # Space 2up/2right is in bounds and empty
-                if in_bounds((rownum-2, colnum+2)) and board[rownum-2][colnum+2] == '':
-                    # Space directly up/right is a white piece
-                    if board[rownum-1][colnum+1] in white_pieces:
-                        legal.append( ((rownum, colnum), (rownum-2, colnum+2)) )
+    return legal
 
-            # Check backward jumps available to black
-            if col == black_king and player == 0:
-                # Space 2down/2left is in bounds and empty
-                if in_bounds((rownum+2, colnum-2)) and board[rownum+2][colnum-2] == '':
-                    # Space directly down/left is a white piece
-                    if board[rownum+1][colnum-1] in white_pieces:
-                        legal.append( ((rownum, colnum), (rownum+2, colnum-2)) )
+# Returns a list of jumps for the piece at the given coordinates
+def piece_jumps(state, coords):
+    board = state['board']
+    player = state['player']
+    row, col = coords
+    piece = board[row][col]
 
-                # Space 2down/2right is in bounds and empty
-                if in_bounds((rownum+2, colnum+2)) and board[rownum+2][colnum+2] == '':
-                    # Space directly down/right is a white piece
-                    if board[rownum+1][colnum+1] in white_pieces:
-                        legal.append( ((rownum, colnum), (rownum+2, colnum+2)) )
+    legal = []
 
-            # Check forward jumps available to white
-            if col in white_pieces and player == 1:
-                # Space 2down/2left is in bounds and empty
-                if in_bounds((rownum+2, colnum-2)) and board[rownum+2][colnum-2] == '':
-                    # Space directly down/left is a black piece
-                    if board[rownum+1][colnum-1] in black_pieces:
-                        legal.append( ((rownum, colnum), (rownum+2, colnum-2)) )
+    # Check forward jumps available to black
+    if piece in black_pieces:
+        # Space two up/two left is in bounds and empty
+        if in_bounds((row-2, col-2)) and board[row-2][col-2] == '':
+            # Space directly up/left is a white piece
+            if board[row-1][col-1] in white_pieces:
+                legal.append( ((row, col), (row-2, col-2)) )
 
-                # Space 2down/2right is in bounds and empty
-                if in_bounds((rownum+2, colnum+2)) and board[rownum+2][colnum+2] == '':
-                    # Space directly down/right is a black piece
-                    if board[rownum+1][colnum+1] in black_pieces:
-                        legal.append( ((rownum, colnum), (rownum+2, colnum+2)) )
+        # Space 2up/2right is in bounds and empty
+        if in_bounds((row-2, col+2)) and board[row-2][col+2] == '':
+            # Space directly up/right is a white piece
+            if board[row-1][col+1] in white_pieces:
+                legal.append( ((row, col), (row-2, col+2)) )
 
-            # Check backward jumps available to white
-            if col == white_king and player == 1:
-                # Space 2up/2left is in bounds and empty
-                if in_bounds((rownum-2, colnum-2)) and board[rownum-2][colnum-2] == '':
-                    # Space directly up/left is a black piece
-                    if board[rownum-1][colnum-1] in black_pieces:
-                        legal.append( ((rownum, colnum), (rownum-2, colnum-2)) )
+    # Check backward jumps available to black
+    if piece == black_king:
+        # Space 2down/2left is in bounds and empty
+        if in_bounds((row+2, col-2)) and board[row+2][col-2] == '':
+            # Space directly down/left is a white piece
+            if board[row+1][col-1] in white_pieces:
+                legal.append( ((row, col), (row+2, col-2)) )
 
-                # Space 2up/2right is in bounds and empty
-                if in_bounds((rownum-2, colnum+2)) and board[rownum-2][colnum+2] == '':
-                    # Space directly up/right is a black piece
-                    if board[rownum-1][colnum+1] in black_pieces:
-                        legal.append( ((rownum, colnum), (rownum-2, colnum+2)) )
+        # Space 2down/2right is in bounds and empty
+        if in_bounds((row+2, col+2)) and board[row+2][col+2] == '':
+            # Space directly down/right is a white piece
+            if board[row+1][col+1] in white_pieces:
+                legal.append( ((row, col), (row+2, col+2)) )
+
+    # Check forward jumps available to white
+    if piece in white_pieces:
+        # Space 2down/2left is in bounds and empty
+        if in_bounds((row+2, col-2)) and board[row+2][col-2] == '':
+            # Space directly down/left is a black piece
+            if board[row+1][col-1] in black_pieces:
+                legal.append( ((row, col), (row+2, col-2)) )
+
+        # Space 2down/2right is in bounds and empty
+        if in_bounds((row+2, col+2)) and board[row+2][col+2] == '':
+            # Space directly down/right is a black piece
+            if board[row+1][col+1] in black_pieces:
+                legal.append( ((row, col), (row+2, col+2)) )
+
+    # Check backward jumps available to white
+    if piece == white_king:
+        # Space 2up/2left is in bounds and empty
+        if in_bounds((row-2, col-2)) and board[row-2][col-2] == '':
+            # Space directly up/left is a black piece
+            if board[row-1][col-1] in black_pieces:
+                legal.append( ((row, col), (row-2, col-2)) )
+
+        # Space 2up/2right is in bounds and empty
+        if in_bounds((row-2, col+2)) and board[row-2][col+2] == '':
+            # Space directly up/right is a black piece
+            if board[row-1][col+1] in black_pieces:
+                legal.append( ((row, col), (row-2, col+2)) )
 
     return legal
 
@@ -169,14 +184,20 @@ def next_state(state, play):
     state['board'][origin_row][origin_col] = ''
     state['board'][dest_row][dest_col] = piece
 
-    # If a piece was jumped, remove it from the game
+    # If the play was a jump
     if abs(origin_row - dest_row) == 2:
+        # Remove the jumped piece from the game
         jumped_row = (origin_row + dest_row) // 2
         jumped_col = (origin_col + dest_col) // 2
         state['board'][jumped_row][jumped_col] = ''
 
-    # Change active player
-    state['player'] = 1 if state['player'] == 0 else 0
+        # If no jumps are available to that piece
+        if not piece_jumps(state, dest):
+            # Change the active player
+            state['player'] = 1 if state['player'] == 0 else 0
+    # If the play wasn't a jump, it's safe to change the active player
+    else:
+        state['player'] = 1 if state['player'] == 0 else 0
 
 # Given a game state, determine if the game has been won/lost/tied
 def winner(state):
