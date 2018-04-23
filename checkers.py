@@ -201,6 +201,8 @@ def next_state(state, play):
 
 # Given a game state, determine if the game has been won/lost/tied
 def winner(state):
+    board = state['board']
+
     num_black = 0
     num_white = 0
 
@@ -227,23 +229,23 @@ def to_string(state):
     # Replace empty spots with a space to print properly spaced
     board = [[col if col else ' ' for col in row] for row in board]
 
-    s  = '  1 2 3 4 5 6 7 8\n'
+    s  = '  0 1 2 3 4 5 6 7\n'
     s += ' ┏━┳━┳━┳━┳━┳━┳━┳━┓\n'
-    s += 'A┃' + '┃'.join(board[0]) + '┃' + '\n'
+    s += '0┃' + '┃'.join(board[0]) + '┃' + '\n'
     s += ' ┣━╋━╋━╋━╋━╋━╋━╋━┫\n'
-    s += 'B┃' + '┃'.join(board[1]) + '┃' + '\n'
+    s += '1┃' + '┃'.join(board[1]) + '┃' + '\n'
     s += ' ┣━╋━╋━╋━╋━╋━╋━╋━┫\n'
-    s += 'C┃' + '┃'.join(board[2]) + '┃' + '\n'
+    s += '2┃' + '┃'.join(board[2]) + '┃' + '\n'
     s += ' ┣━╋━╋━╋━╋━╋━╋━╋━┫\n'
-    s += 'D┃' + '┃'.join(board[3]) + '┃' + '\n'
+    s += '3┃' + '┃'.join(board[3]) + '┃' + '\n'
     s += ' ┣━╋━╋━╋━╋━╋━╋━╋━┫\n'
-    s += 'E┃' + '┃'.join(board[4]) + '┃' + '\n'
+    s += '4┃' + '┃'.join(board[4]) + '┃' + '\n'
     s += ' ┣━╋━╋━╋━╋━╋━╋━╋━┫\n'
-    s += 'F┃' + '┃'.join(board[5]) + '┃' + '\n'
+    s += '5┃' + '┃'.join(board[5]) + '┃' + '\n'
     s += ' ┣━╋━╋━╋━╋━╋━╋━╋━┫\n'
-    s += 'G┃' + '┃'.join(board[6]) + '┃' + '\n'
+    s += '6┃' + '┃'.join(board[6]) + '┃' + '\n'
     s += ' ┣━╋━╋━╋━╋━╋━╋━╋━┫\n'
-    s += 'H┃' + '┃'.join(board[7]) + '┃' + '\n'
+    s += '7┃' + '┃'.join(board[7]) + '┃' + '\n'
     s += ' ┗━┻━┻━┻━┻━┻━┻━┻━┛\n'
 
     return s

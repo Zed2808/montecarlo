@@ -80,6 +80,10 @@ def simulate(game, state, play):
         # Get legal plays for the new state
         legal_plays = game.legal_plays(state_copy)
 
+        # If no moves are available (stalemate)
+        if not legal_plays:
+            break
+
         # Randomly select a legal play
         play = random.choice(legal_plays)
 
