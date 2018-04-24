@@ -60,7 +60,7 @@ def best_play(game, state, sim_time=1):
     move = max(wins, key=wins.get)
     log(f'Best play: {move}')
 
-    return move
+    return wins
 
 # Randomly simulate a game given a play, return whether or not the game was won
 def simulate(game, state, play):
